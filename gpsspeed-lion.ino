@@ -26,7 +26,7 @@
 #include <Adafruit_NeoPixel.h>
 #define PIN            7               // Which pin on the Arduino is connected to the NeoPixels?
                                        // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      4               //set number of pixels here, I have 4 in a strip with the first disabled because it's under the heat shrink.
+#define NUMPIXELS      3               //set number of pixels here, 3 for displaying the status of the satellites. 
                                        // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
                                        // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
                                        // example for more information on possible values.
