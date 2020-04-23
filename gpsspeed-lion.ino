@@ -37,12 +37,11 @@ int satval = 0;
 int dispt = 0;
 unsigned long timeOut;                 // Backlight timeout variable
 unsigned long previousMillis = 0;
-unsigned long previousMillis2 = 0;
+unsigned long previousMillis1 = 0;  
 unsigned long interval;
 static const int RXPin = 3, TXPin = 4; //GPS Pins
 static const uint32_t GPSBaud = 9600;  //GPS Baud rate, set to default of Ublox module
 Statistic GPSStats;                    //setup stats
-unsigned long previousMillis1 = 0;     // last time update
 const unsigned long interval1 = 15000; // interval at which to do something (milliseconds)
 
 //Time
@@ -185,17 +184,16 @@ void setup()
   lcd.print(F("GPS data - Lion 4.0"));    // print a text
   lcd.setCursor(0, 3);                 // put cursor at colon x and row y
   lcd.print(F("  GPS Speedometer "));     // print a text
-  delay (5000);
+  delay (5000);  //time  boot screen is shown, 5 seconds
   lcd.clear();
 }
 
 void loop() {
 
-  int satval = gps.satellites.value(); //check sats availible and set to satval
+  int satval = gps.satellites.value(); //add sats availible to satval
   if (satval >= 13) {
     satval = 12;
   }
-
 
   //below turns off the backlight if it's just waiting for satelites
   if (satval >= 1) {
@@ -203,8 +201,8 @@ void loop() {
     lcd.backlight();                   // turn on backlight
     onval = 1;
   }
-  else if ((millis() - timeOut) > 30000) {  // Turn off backlight for 30 seconds, else turn it off
-    lcd.noBacklight();                 // turn off backlight
+  else if ((millis() - timeOut) > 30000) {  // Turn off backlight after 30 seconds
+    lcd.noBacklight();              
     onval = 0;
   }
 
@@ -292,16 +290,9 @@ void loop() {
 
   pixels.show();                       // This sends the updated pixel color to the hardware.
 
+  //clear out data if there is no sats to prevent false averages
   unsigned long currentMillis1 = millis();
-
-  if (currentMillis1 - previousMillis1 >= interval) {
-    previousMillis1 = currentMillis1;
-    lcd.clear();
-  }
-
-  //clear out data is no sats to prevent false averages
-  unsigned long currentMillis2 = millis();
-  if (currentMillis2 - previousMillis2 >= interval1) {
+  if (currentMillis1 - previousMillis1 >= interval1) {
     previousMillis1 = currentMillis1;
     if (gps.satellites.value() == 0) {
       GPSStats.clear();
@@ -369,7 +360,7 @@ static void screen() {
   if (dispt == 0) {
     dispt = (dispt + 12);
   }
-
+//AM or PM calc
   if (dispt > 12) {
     dispt = (dispt - 12);
     lcd.setCursor(18, 1);
@@ -417,7 +408,7 @@ static void screen() {
   #endif
 
   //max speed
-  lcd.setCursor(0, 0);                 // put cursor at colon 0 and row 0 = left/up
+  lcd.setCursor(0, 0);   // put cursor at colon 0 and row 0 = left/up
   lcd.print(F("MAX:"));
   lcd.print(GPSStats.maximum(), 0);
   #ifdef LAND
@@ -437,7 +428,7 @@ static void screen() {
 }
 
 
-void custom0O()                        // uses segments to build the number 0
+void custom0O()     // uses segments to build the number 
 {
   lcd.setCursor(x, 2);
   lcd.write(8);
@@ -599,7 +590,7 @@ void tempvar(int numar)
   }
 }
 
-//calculate the speed
+//calculate the speed position on screen based on number of digits
 void speedcalc(int speed)
 {
 
